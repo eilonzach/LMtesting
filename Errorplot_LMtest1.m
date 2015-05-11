@@ -6,15 +6,15 @@ arun    = 'hef_LMtest1';
 modstr  = 'JF10';
 freq    = '1.0';
 %fine
-acvols  = 2:2:12;
-lgtauMRs = 6:0.5:8.5;
+acvols  = 2:2:4;
+lgtauMRs = 7:0.2:8;
 % custom
 % acvols = [10];
 % lgtauMRs = [7.5];
 
 if1hz   = 0;
 ifwt    = 1;
-ifplot  = 0;
+ifplot  = 1;
 redo    = 1;
 
 

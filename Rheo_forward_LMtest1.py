@@ -239,6 +239,10 @@ def getJ2byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 # 		
 # 		i2 = integrate.quad(intgrnd_j2tak, 0, np.inf, args=(omega,tauM,Ap,sigmap))[0]
 # 		J2byJu = i2 + (1.0/(omega*tauM))
+		print("")
+		print("%.3e" % P)
+		print("%.3e  %.3e  %.3e  %.3e  " % (tauM,tauH,tauL,tauP))
+		print J2byJu
 				
 	return J2byJu
 
