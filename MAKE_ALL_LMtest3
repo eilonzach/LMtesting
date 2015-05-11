@@ -1,0 +1,146 @@
+#!/bin/bash
+
+##################################   INPUTS   ##################################
+# Give the aspect run name for the output
+arun=hef_LMtest3
+echo "======================================================="
+echo "======================== "$arun" ======================"| sed s/hef_//g
+echo "======================================================="
+
+##### PYTHON TRANSLATE INPUTS
+# Give name of aspect output file
+aspfile="data_hefesto.csv"
+# Give parameterising model name
+model="JF10_eBurg"
+# Give frequency !! MAKE SURE FLOAT (e.g. 1.0) !!
+freq=1.0
+# number of points to do (-1 does all)
+ndo=-1
+# grain size option - 0 to use model's, non-zero to use this value
+gsopt=0
+# number of random interp points to do
+ninterp=5e3 # was 2e4
+
+#### MATLAB 1D AVERAGE INPUTS
+
+# Give the name of the core file
+corefile=PREM_core
+# Give the name of the crust file
+crustfile=PREM_crust
+# Give the name of the Qk file
+Qk_file=STW105_Qk
+# Give the path to the output directory
+odir="modelfiles_testing"
+# Give the path to the matlab guts directory
+gutsdir="../matlab_guts"
+# Give the path to the aspect files directory
+aspdir="../../aspect_output"
+# Rheo_forward module version
+RFmodule=`echo "Rheo_forward_"$arun | sed s/hef_//g`; 
+echo "Using RFmodule" $RFmodule
+# Constants file
+cfile=`echo "constants_complete_"$arun".ini" | sed s/hef_//g`; 
+echo "Using constants file" $cfile
+
+echo "======================================================="
+
+
+#################################   RUNNING   #################################
+# set up loops over activation volume and Delta
+Vmin=2
+Vmax=10
+dV=2;
+# N.B. tau will be divided by 10 and then be the exponent of 10, i.e. tau = 10^(taustr/10)
+taumin=70
+taumax=80
+dtau=2;
+
+niter=0
+
+acvol=$Vmin
+while [ $acvol -le $Vmax ]; do
+
+tauMR_var=$taumin
+while [ $tauMR_var -le $taumax ]; do
+let niter=niter+1
+
+# test params in string for filenames
+tauMRstr=`echo "$tauMR_var/10" | bc -l | python -c "print('%.1f' % float(raw_input()))"`
+teststr=`echo V"$acvol"_lgTau"$tauMRstr"`
+tauMR=`echo "$tauMR_var/10" | bc -l | python -c "print('%.4e' % pow(10,float(raw_input())))"`
+echo $teststr
+echo $tauMR
+
+
+# Shorten model name
+modstr=`echo $model | sed s/_eBurg//`
+
+# name 1D_mineos-style outputfile from MATLAB
+tfile=trans_"$arun"_"$teststr"_"$modstr"_"$freq"
+
+# name 1D_mineos-style outputfile from MATLAB
+onam=1D_"$arun"_"$teststr"_"$modstr"_"$freq"
+
+date
+echo $niter" "$tfile
+
+#Set the values of Vact and Delta in the Rheo_forward file
+cat $cfile | awk -v tauMR="$tauMR" '$1 == "lmtauMR:" {print "lmtauMR:\t"tauMR; next} {print $0}' > junk
+cat junk | awk -v acvol="$acvol" '$1 == "lmV:" {print "lmV:\t\t"acvol"e-6"; next} {print $0}' > junk2
+mv junk2 $cfile
+rm junk
+
+if [ $ninterp -eq -1 ]
+then
+
+#Do translation of T,P,d,etc to velocities
+./translatePTd2VQ.py $aspdir/$aspfile $odir/$tfile $model $freq $ndo $RFmodule $cfile $gsopt
+#
+else
+
+# if [ $niter -eq 1 ]
+# then
+# #downsamples the aspect output 
+# ##only do this once per model, so we use same downsampled dataset for all translations
+# echo "Downsampling aspect model"
+# /Applications/MATLAB_R201*.app/bin/matlab -nodesktop << !
+# bokachoda = 1;
+# downsampler
+# $aspfile
+# downtest_$aspfile
+# $aspdir
+# $ninterp
+# $gutsdir
+# quit
+# !
+# fi
+#Do translation of T,P,d,etc to velocities
+./translatePTd2VQ.py $aspdir/downtest_$aspfile $odir/$tfile $model $freq $ndo $RFmodule $cfile $gsopt
+
+fi
+
+# comment the below out if you only want to do translate (can make modelfiles later)
+#build in a pause in case we need to quit
+echo "Pause: ctrl-C now or forever hold your peace"
+sleep 2
+
+#Make 1D average
+/Applications/MATLAB_R201*.app/bin/matlab -nodesktop << !
+bokachoda = 1;
+run ../make_1Dav
+$aspdir/$aspfile
+$tfile
+$corefile
+$crustfile
+$Qk_file
+$onam
+$odir
+$gutsdir
+quit
+!
+
+let tauMR_var=tauMR_var+$dtau # increment tau
+done
+let acvol=acvol+$dV # increment V
+done
+

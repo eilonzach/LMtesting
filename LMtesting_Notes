@@ -1,0 +1,38 @@
+Notes on the lower mantle testing:
+will cycle through the lower mantle parameters V and TauMR (the reference Maxwell time, i.e. the prefactor)
+These are called in the Rheo_forward script from the "constants_complete_LMtest#.ini files where the lower mantle values are written in the bash script that loops over the range of values
+
+LMtest1:
+Simple test grid searching over some values of lower mantle activation volume and reference Maxwell time, assuming both are constant throughout the lower mantle.
+In this run we do not adjust the reference Temp and Pressure values in the LM
+conditions pertinent to the upper mantle (/experiments...)
+• Activation volume = 2:2:10 (x 10^-6)
+• Reference Maxwell time = logspace(1e7,1e8,6) 
+• Delta = 1.04
+These come from the 1D profile through the model, with rough T and P values for a depth of 1500km, in the mid mantle, well below the TZ but above the slabby bit of our model... 
+• Reference Pressure    = 0.2e9    (NOT 6.25e10 Pa (62.5 GPa))
+• Reference Temperature = 1173  (NOT 2020 C ==> 2293 K)
+
+LMtest3:
+Simple test grid searching over some values of lower mantle activation volume and Maxwell time at the reference, assuming both are constant throughout the lower mantle. 
+Also, we DO adjust the reference Temp and Pressure values in the LM to reduce the increasingly exponential behavour of the Arrhenius function far away from the reference 
+conditions pertinent to the upper mantle (/experiments...)
+The difference between this and LMtest1 is just that the reference P, T have changed
+• Activation volume = 2:2:10 (x 10^-6)
+• Reference Maxwell time = logspace(1e7,1e8,6)
+• Delta = 1.04
+These come from the 1D profile through the model, with rough T and P values for a depth of 1500km, in the mid mantle, well below the TZ but above the slabby bit of our model...
+• Reference Pressure    = 6.25e10 Pa (62.5 GPa)
+• Reference Temperature = 2020 C ==> 2293 K
+
+LMtest4:
+Simple test grid searching over some values of lower mantle activation volume and Maxwell time at the reference, assuming both are constant throughout the lower mantle. 
+We HAVE adjusted the reference Temp and Pressure values in the LM to reduce the increasingly exponential behavour of the Arrhenius function far away from the reference 
+conditions pertinent to the upper mantle (/experiments...)
+The difference between this and LMtest3 is that here we're using a lower mantle Delta of 0.4 (as opposed to the UM value of 1.04) based on prev. tests
+• Activation volume = 2:2:10 (x 10^-6)
+• Reference Maxwell time = logspace(1e7,1e8,6)
+• Delta = 0.4
+These come from the 1D profile through the model, with rough T and P values for a depth of 1500km, in the mid mantle, well below the TZ but above the slabby bit of our model...
+• Reference Pressure    = 6.25e10 Pa (62.5 GPa)
+• Reference Temperature = 2020 C ==> 2293 K
