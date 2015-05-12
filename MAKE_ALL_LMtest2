@@ -127,7 +127,8 @@ fi
 # #Make 1D average
 # /Applications/MATLAB_R201*.app/bin/matlab -nodesktop << !
 # bokachoda = 1;
-# run ../make_1Dav
+# addpath('..')
+# run('make_1Dav')
 # $aspdir/$aspfile
 # $tfile
 # $corefile

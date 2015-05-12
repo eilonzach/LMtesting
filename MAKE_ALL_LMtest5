@@ -2,7 +2,7 @@
 
 ##################################   INPUTS   ##################################
 # Give the aspect run name for the output
-arun=hef_LMtest4
+arun=hef_LMtest5
 echo "======================================================="
 echo "======================== "$arun" ======================"| sed s/hef_//g
 echo "======================================================="
@@ -50,26 +50,24 @@ echo "======================================================="
 Vmin=2
 Vmax=10
 dV=2;
-# N.B. tau will be divided by 10 and then be the exponent of 10, i.e. tau = 10^(taustr/10)
-taumin=70
-taumax=80
-dtau=2;
+# N.B. tau will be divided by 100, and 1 subtracted and then be the exponent of 10, i.e. tauF = 10^(taustr/100 - 1)
+taufmin=000
+taufmax=200
+dtau=25;
 
 niter=0
 
 acvol=$Vmin
 while [ $acvol -le $Vmax ]; do
 
-tauMR_var=$taumin
-while [ $tauMR_var -le $taumax ]; do
+tauF_var=$taufmin
+while [ $tauF_var -le $taufmax ]; do
 let niter=niter+1
 
 # test params in string for filenames
-tauMRstr=`echo "$tauMR_var/10" | bc -l | python -c "print('%.1f' % float(raw_input()))"`
-teststr=`echo V"$acvol"_lgTau"$tauMRstr"`
-tauMR=`echo "$tauMR_var/10" | bc -l | python -c "print('%.4e' % pow(10,float(raw_input())))"`
-echo $teststr
-echo $tauMR
+tauFstr=`echo "$tauF_var/100 - 1" | bc -l | python -c "print('%.1f' % float(raw_input()))"`
+teststr=`echo V"$acvol"_lgTau"$tauFstr"`
+tauF=`echo "$tauF_var/100 - 1" | bc -l | python -c "print('%.3f' % pow(10,float(raw_input())))"`
 
 
 # Shorten model name
@@ -81,11 +79,13 @@ tfile=trans_"$arun"_"$teststr"_"$modstr"_"$freq"
 # name 1D_mineos-style outputfile from MATLAB
 onam=1D_"$arun"_"$teststr"_"$modstr"_"$freq"
 
+echo "======================================================="
 date
 echo $niter" "$tfile
+echo "tauF = "$tauF
 
 #Set the values of Vact and Delta in the Rheo_forward file
-cat $cfile | awk -v tauMR="$tauMR" '$1 == "lmtauMR:" {print "lmtauMR:\t"tauMR; next} {print $0}' > junk
+cat $cfile | awk -v tauF="$tauF" '$1 == "lmtauF:" {print "lmtauF:\t"tauF; next} {print $0}' > junk
 cat junk | awk -v acvol="$acvol" '$1 == "lmV:" {print "lmV:\t\t"acvol"e-6"; next} {print $0}' > junk2
 mv junk2 $cfile
 rm junk
@@ -140,7 +140,7 @@ $gutsdir
 quit
 !
 
-let tauMR_var=tauMR_var+$dtau # increment tau
+let tauF_var=tauF_var+$dtau # increment tau
 done
 let acvol=acvol+$dV # increment V
 done

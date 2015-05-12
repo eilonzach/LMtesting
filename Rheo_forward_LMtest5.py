@@ -62,66 +62,10 @@ def PTd_VsQ(freq,P,T,gs,rho,model,highQapprox,Vs0=None,cfile="constants_complete
 
 	Q=1/qs
 	
-# 	if Q > 1e9:
-# 		pdb.set_trace()	
-	
 	return Vs,Q
 
 def getJ1byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 	""" This subroutine gets the value of J1/Ju based on expressions in a paper """
-# 	#	If model is McCarthy 2011
-# 	if model == 'M11':
-# 		if Vs0==None:
-# 			fn=getfn(freq,P,T,gs,model)
-# 		else:
-# 			fn=getfn(freq,P,T,gs,model,Vs0,rho)
-# 						
-# 		#Getting J1 values from McCarthy et al., 2011
-# 		a0=getconstant(model,'a0') 
-# 		a1=getconstant(model,'a1') 
-# 		a2=getconstant(model,'a2') 
-# 		a3=getconstant(model,'a3') 
-# 		a4=getconstant(model,'a4') 
-# 		a5=getconstant(model,'a5') 
-# 		a6=getconstant(model,'a6') 
-# 
-# 		if fn <= 1.0e+13: 
-# 			val=0
-# 			val=val+a0*(pow(log(fn),0))
-# 			val=val+a1*(pow(log(fn),1))
-# 			val=val+a2*(pow(log(fn),2))
-# 			val=val+a3*(pow(log(fn),3))
-# 			val=val+a4*(pow(log(fn),4))
-# 			val=val+a5*(pow(log(fn),5))
-# 			val=val+a6*(pow(log(fn),6))
-# 			J1byJu=1/val
-# 		else:
-# 			J1byJu=1
-# 
-# #	If model is Priestley and McKenzie 2013		
-# 	elif model == 'P_M13':
-# 		fn=getfn(freq,P,T,gs,model,Vs0,rho)
-# 		#Getting J1 values from McCarthy et al., 2011
-# 		a0=getconstant(model,'a0') 
-# 		a1=getconstant(model,'a1') 
-# 		a2=getconstant(model,'a2') 
-# 		a3=getconstant(model,'a3') 
-# 		a4=getconstant(model,'a4') 
-# 		a5=getconstant(model,'a5') 
-# 		a6=getconstant(model,'a6') 
-# 
-# 		if fn <= 1.0e+13: 
-# 			val=0
-# 			val=val+a0*(pow(log(fn),0))
-# 			val=val+a1*(pow(log(fn),1))
-# 			val=val+a2*(pow(log(fn),2))
-# 			val=val+a3*(pow(log(fn),3))
-# 			val=val+a4*(pow(log(fn),4))
-# 			val=val+a5*(pow(log(fn),5))
-# 			val=val+a6*(pow(log(fn),6))
-# 			J1byJu=1/val
-# 		else:
-# 			J1byJu=1
 			
 #	If model is extended Burgers from Jackson & Faul 2010
 	if model == 'JF10_eBurg':
@@ -135,7 +79,7 @@ def getJ1byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 		ma=getconstant(model,'ma')
 
 		if P > 24.3e9: # LM
-			V,Delta,TR,PR,tauMR = get_lm_parms()
+			V,Delta,TR,PR,tauF = get_lm_parms()
 								
 		omega=2*pi*freq	
 		tauH=gettau(tauHR,ma,P,T,gs,model)
@@ -149,46 +93,12 @@ def getJ1byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 
 		J1byJu=1.0+(j1b*i1b)+(j1p*i1p)
 				
-# #	If model is Takei 2014
-# 	elif model == 'Tak14':
-# 		m=getconstant(model,'m') # grainsize exponent
-# 		eta0=getconstant(model,'eta0') # ref viscosity
-# 		Ap=getconstant(model,'Ap') # pre-exponent for peak (normalisation factor)
-# 		sigmap=getconstant(model,'sigmap') # controls peak width - see Takei 2014 eqn 17
-# 		
-# 		#### Value of the real and complex part of compliance			
-# 		if Vs0==None:
-# 			Ju=getJu(T,P,model)
-# 		else:
-# 			Ju=getJu(T,P,model,Vs0,rho)	
-# 		
-# 		omega=2*pi*freq	
-# 		tauM=gettau(Ju*eta0,m,P,T,gs,model)
-# 		
-# 		i1 = integrate.quad(intgrnd_j1tak, 0, np.inf, args=(omega,tauM,Ap,sigmap))[0]
-# 
-# 		J1byJu = 1.0 + i1
 										
 	return J1byJu
 
 def getJ2byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 	""" This subroutine gets the value of J2 based on expressions in a paper """	
 	
-# #	If model is McCarthy 2011 
-# 	if model == 'M11':
-# 		fn=getfn(freq,P,T,gs,model,Vs0,rho)
-# 		taun=1/(2*pi*fn)
-# 		#Getting J2 values from McCarthy et al., 2011
-# 		Xn=mccarthyXn(taun)
-# 		J2byJu=(pi/2*Xn)+taun/(2*pi)
-# 
-# #	If model is Priestley and McKenzie 2013		
-# 	elif model == 'P_M13':
-# 		fn=getfn(freq,P,T,gs,model,Vs0,rho)
-# 		taun=1/(2*pi*fn)
-# 		#Getting J2 values from McCarthy et al., 2011
-# 		Xn=mccarthyXn(taun)
-# 		J2byJu=(pi/2*Xn)+taun/(2*pi)
 
 #	If model is extended Burgers from Jackson & Faul 2010
 	if model == 'JF10_eBurg':
@@ -204,7 +114,7 @@ def getJ2byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 		mv=getconstant(model,'mv')
 
 		if P > 24.3e9: # LM
-			V,Delta,TR,PR,tauMR = get_lm_parms()
+			V,Delta,TR,PR,tauF = get_lm_parms()
 
 		omega=2*pi*freq	
 		tauH=gettau(tauHR,ma,P,T,gs,model)
@@ -220,30 +130,7 @@ def getJ2byJu(freq,P,T,gs,model,Vs0=None,rho=None):
 		i2p = integrate.quad(intgrnd_j2p, 0, np.inf, args=(omega,tauP,sigma))[0]
 		
 		J2byJu = (j2b*i2b)+(j2p*i2p)+(1.0/(omega*tauM))
-		
-# #	If model is Takei 2014
-# 	elif model == 'Tak14':
-# 		m=getconstant(model,'m') # grainsize exponent
-# 		eta0=getconstant(model,'eta0') # ref viscosity
-# 		Ap=getconstant(model,'Ap') # pre-exponent for peak (normalisation factor)
-# 		sigmap=getconstant(model,'sigmap') # controls peak width - see Takei 2014 eqn 17
-# 
-# 		#### Value of the real and complex part of compliance			
-# 		if Vs0==None:
-# 			Ju=getJu(T,P,model)
-# 		else:
-# 			Ju=1/(rho*pow(Vs0,2))
-# 		
-# 		omega=2*pi*freq	
-# 		tauM=gettau(Ju*eta0,m,P,T,gs,model)
-# 		
-# 		i2 = integrate.quad(intgrnd_j2tak, 0, np.inf, args=(omega,tauM,Ap,sigmap))[0]
-# 		J2byJu = i2 + (1.0/(omega*tauM))
-# 		print("")
-# 		print("%.3e" % P)
-# 		print("%.3e  %.3e  %.3e  %.3e  " % (tauM,tauH,tauL,tauP))
-# 		print J2byJu
-				
+						
 	return J2byJu
 
 def mccarthyXn(taun):
@@ -273,23 +160,6 @@ def getfn(freq,P,T,gs,model,Vs0 = None,rho=None):
 	fn=freq*taur	
 	return fn
 
-# def geteta(P,T,gs,model):
-# 	"""Get the viscosity from a combination of power law and Arrhenius eqn. like 
-# 	in McCarthy eqn. 8"""
-# 
-# 	TR=getconstant(model,'TR') 
-# 	gsR=getconstant(model,'gsR')
-# 	eta0=getconstant(model,'eta0')
-# 	if model ==  'M11' or model ==  'P_M13':
-# 		m=getconstant(model,'m')
-# 	elif model ==  'eBurgers':
-# 		m=getconstant(model,'ma')
-# 	E=getconstant(model,'E')
-# 	R=getconstant('Common','R')
-# 
-# 	eta=eta0*pow((gs/gsR),m)*exp((E/R)*(TR-T)/(TR*T))
-# 	
-# 	return eta
 	
 def getJu(T,P,model,Vs0 = None,rho = None ):
 	"""This gets the unrelaxed modulus at T,P conditions based on constants from study"""
@@ -317,7 +187,7 @@ def gettau(tau0,m,P,T,gs,model):
 	R=getconstant('Common','R')	
 	
 	if P > 24.3e9: # LM
-		V,Delta,TR,PR,tauMR = get_lm_parms()
+		V,Delta,TR,PR,tauF = get_lm_parms()
 		
 # 	print V
 # 	print Delta
@@ -326,29 +196,10 @@ def gettau(tau0,m,P,T,gs,model):
 # 	print tauMR
 # 	pdb.set_trace()
 		
-	tau=tau0*pow((gs/gsR),m)*exp( (E/R)*(TR-T)/(TR*T) + (V/R)*(P*TR-PR*T)/(T*TR) )
+	tau=tau0*tauF*pow((gs/gsR),m)*exp( (E/R)*(TR-T)/(TR*T) + (V/R)*(P*TR-PR*T)/(T*TR) )
 	
 	return tau
 
-# def gettauM_P_M13(T,P,Ju):
-# 	"""This gets the Maxwell relaxation time at T,P conditions based on constants from study"""
-# 	model='P_M13'
-# 	TR=getconstant(model,'TR')
-# 	PR=getconstant(model,'PR')
-# 	E=getconstant(model,'E')
-# 	V=getconstant(model,'V')
-# 	R=getconstant('Common','R')	
-# 	eta0=getconstant(model,'eta0')	
-# 	
-# 	if P > 24.3e9: # LM
-# 		V,Delta,TR,PR,tauMR = get_lm_parms()
-# 
-# 	
-# 	astar = exp((E - PR*V)/(R*TR))/exp((E-P*V)/(R*T))
-# 	eta = eta0/astar
-# 	tauM = Ju*eta
-# 	
-# 	return tauM
 		
 #####  Integrations for JF10  #####
 def intgrate_j1b(limL,limH,alpha,omega,N=1000):
@@ -381,15 +232,6 @@ def intgrate_j1p(limL,limH,omega,tauP,sigma,N=1000):
 	I = I[len(I)-1]
 	return I
 	
-# def intgrate_j2p(limL,limH,omega,tauP,sigma,N=1000):
-# 	xx = np.logspace(np.log10(limL),np.log10(limH),N)
-# 	yy = np.zeros(len(xx))
-# 	for ii in range(0,len(xx)):
-# 		yy[ii] = (1/(1 + pow(omega*xx[ii],2)))*exp(-pow(log(xx[ii]/tauP),2)/(2*pow(sigma,2)))
-# 		
-# 	I=integrate.cumtrapz(yy,xx)
-# 	I = I[len(I)-1]
-# 	return I
 		
 def intgrnd_j1b(tau,alpha,omega):
 	return pow(tau,alpha-1)/(1. + pow(omega*tau,2.))
@@ -404,20 +246,12 @@ def intgrnd_j2p(tau,omega,tauP,sigma):
 	return (1/(1 + pow(omega*tau,2)))*exp(-pow(log(tau/tauP),2)/(2*pow(sigma,2)))
 
 
-# #####  Integrations for Takei 2014	#####
-# def intgrnd_j1tak(tau,omega,tauM,Ap,sigmap):
-# 	"""Integration part of J1byJu term (eqn 8 in Takei et al 2014)"""
-# 	return (1/tau)*(1/(1 + pow(omega*tau,2)))*(0.444*pow(tau/tauM,0.38) + Ap*exp(-0.5*pow(((log(tau/tauM) + 8.1)/sigmap),2)))
-# 
-# def intgrnd_j2tak(tau,omega,tauM,Ap,sigmap):
-# 	"""Integration part of J2byJu term (eqn 8 in Takei et al 2014)"""
-# 	return (omega/(1 + pow(omega*tau,2)))*(0.444*pow(tau/tauM,0.38) + Ap*exp(-0.5*pow(((log(tau/tauM) + 8.1)/sigmap),2)))
 
 def getconstant(model,par):
 	"""This subroutine gets the value of a constant relevant for a modeling 
 	approach"""
 	parser = SafeConfigParser()
-# 	parser.read('constants_complete_LMtest1.ini')
+# 	parser.read('constants_complete_LMtest4.ini')
 	parser.read(constfileGlob)
 	val=float(parser.get(model,par))
 	return val
@@ -428,8 +262,8 @@ def get_lm_parms():
 	Delta=getconstant('LOWM','lmDelta')
 	TR=getconstant('LOWM','lmTR')
 	PR=getconstant('LOWM','lmPR')
-	tauMR=getconstant('LOWM','lmtauMR')
-	return V,Delta,TR,PR,tauMR
+	tauF=getconstant('LOWM','lmtauF')
+	return V,Delta,TR,PR,tauF
 
 
 	

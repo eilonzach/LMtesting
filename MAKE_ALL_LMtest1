@@ -47,7 +47,7 @@ echo "======================================================="
 
 #################################   RUNNING   #################################
 # set up loops over activation volume and Delta
-Vmin=2
+Vmin=6
 Vmax=10
 dV=2;
 # N.B. tau will be divided by 10 and then be the exponent of 10, i.e. tau = 10^(taustr/10)
@@ -127,7 +127,8 @@ sleep 2
 #Make 1D average
 /Applications/MATLAB_R201*.app/bin/matlab -nodesktop << !
 bokachoda = 1;
-run ../make_1Dav
+addpath('..')
+run('make_1Dav')
 $aspdir/$aspfile
 $tfile
 $corefile
